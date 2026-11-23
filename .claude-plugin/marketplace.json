@@ -1,0 +1,16 @@
+{
+  "name": "sidecars",
+  "owner": {
+    "name": "sidecars.dev",
+    "url": "https://sidecars.dev"
+  },
+  "description": "Skills for reviewing agent work on sidecars.dev before any pull request.",
+  "plugins": [
+    {
+      "name": "sidecars",
+      "source": "./",
+      "description": "api-design-review and change-review: put an agent's design or finished work before a human on sidecars.dev and iterate on their comments.",
+      "category": "development"
+    }
+  ]
+}

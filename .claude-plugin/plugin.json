@@ -1,0 +1,11 @@
+{
+  "name": "sidecars",
+  "description": "Agent Skills for the sidecars.dev review loop: api-design-review and change-review.",
+  "author": {
+    "name": "sidecars.dev",
+    "url": "https://sidecars.dev"
+  },
+  "homepage": "https://sidecars.dev",
+  "repository": "https://github.com/sidecars-dev/skills",
+  "keywords": ["review", "api-design", "code-review", "sidecars"]
+}
