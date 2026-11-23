@@ -1,6 +1,6 @@
 ---
 name: api-design-review
-description: Put an API design before the human on sidecars.dev as concise design files on a pushed branch, and iterate on their comments until they approve. Use before implementing a design, or when asked for an API Design Review.
+description: Put an API design before the human on sidecars.dev as concise design files on a pushed branch, and iterate on their comments until they approve. Use when asked for an API Design Review.
 ---
 
 An API Design Review shows the human the shape of the work before you build it: the smallest amount of code that conveys the design, in whatever language the work is in. The human reads it on sidecars.dev, often hours later and on their phone, and hands it back with a Verdict: Approve or Request Changes. You drive it with the `sidecars` CLI. You push ordinary branches to GitHub and never open a pull request.
@@ -40,7 +40,7 @@ Commit and push. From now on, keep every file's path stable (see [Iterate](#5-it
 
 ## 3. Submit
 
-1. Run `sidecars review submit --dry-run -f manifest.json`. It runs every server check and creates nothing. Fix each error at the JSON path on its `path:` line, and repeat until it passes.
+1. Run `sidecars review submit --dry-run -f manifest.json`. Fix each error at the JSON path on its `path:` line, and repeat until it passes with no errors and no warnings.
 2. Run `sidecars review submit -f manifest.json`. Compare each branch's SHA in the output with `git rev-parse <branch>`. Those SHAs are exactly what the human reviews.
 3. Show the human the `KEY-n` and the link.
 
@@ -55,22 +55,22 @@ The Handback opens with a `state:` line and ends with a `next:` line. Do what th
 - `changes_requested`: [iterate](#5-iterate-on-request-changes).
 - `approved`: [finish](#6-finish-on-approve). Approve is final.
 - `closed`: the human set the Review aside. Stop work on it.
-- `waiting`, after a `--timeout`: wait again.
+- `waiting`: the human hasn't handed back yet. After a `--timeout`, wait again. After `handback`, tell the human it's still waiting on them, and run `handback` again when they say they're done.
 
-When `wait` fails instead, run its `next:` line, which waits again.
+When `wait` fails instead, do what its `next:` line says, following [Auth](#auth) when it names `sidecars login`.
 
 `sidecars review handback KEY-n` prints the same Handback again at any time and never consumes it. Re-read it after your context is compacted.
 
 ## 5. Iterate on Request Changes
 
-The Handback groups open threads by Design Part. A line anchor reads `` `path`, lines a–b `` and quotes the design file. Each thread carries its thread id. A thread from an earlier Round also shows your last reply's status and whether the human responded this Round.
+The Handback groups open threads by Design Part. A line anchor reads `` `path`, line n `` or `` `path`, lines a–b `` and quotes the design file. Each thread carries its thread id. A thread from an earlier Round also shows your last reply's status and whether the human responded this Round.
 
 1. Address every open thread by editing the design files on the same branch. Then push.
 2. Write one reply per open thread in the manifest's top-level `replies`: `{"thread": "<thread id>", "status": "...", "body": "..."}`.
    - `addressed`: you made the change. Say what changed.
    - `declined`: you won't make it. Say why.
    - `discuss`: you need the human's answer. Ask the question.
-3. Put the whole design in the manifest again, as it is now, alongside the replies. Dry-run it, then submit the next Round with `sidecars review submit --review KEY-n -f manifest.json`. The submit warns about any open thread you didn't reply to. Treat that warning as a miss to fix in the next Round.
+3. Put the whole design in the manifest again, as it is now, alongside the replies. Dry-run it with `--review KEY-n`. It warns about every open thread you didn't reply to, so add those replies. Then submit the next Round with `sidecars review submit --review KEY-n -f manifest.json`.
 4. Go back to [waiting](#4-wait-for-the-handback).
 
 Only the human resolves a thread, and every thread follows its text across Rounds:
